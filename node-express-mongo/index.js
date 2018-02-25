@@ -8,6 +8,7 @@ const mongojs = require('mongojs');
 const db = mongojs('customerapp', ['users']);
 const app = express();
 
+const ObjectId = mongojs.ObjectId;
 
 // View Engine
 app.set('view engine', 'ejs');
@@ -29,7 +30,7 @@ app.use(function(req, res, next){
 app.get('/', function(req, res){
   // res.send('Hello wrold');
   db.users.find(function (err, docs){
-    console.log(docs);
+    // console.log(docs);
     res.render('index', {
      title: 'Customers',
      users: docs
@@ -66,7 +67,7 @@ app.post('/users/add', [
             //     errors: errors.array()
 
             db.users.find(function (err, docs){
-                console.log(docs);
+                // console.log(docs);
                 res.render('index', {
                     title: 'Customers',
                     users: docs,
@@ -95,6 +96,16 @@ app.post('/users/add', [
         }
     }
 );
+
+app.delete('/users/delete/:id', function(req, res){
+    // console.log(req.params.id);
+    db.users.remove({_id: ObjectId(req.params.id)}, function(err, result){
+        if(err) {
+            console.log(err);
+        }
+        res.redirect('back');
+    });
+});
 
 app.listen(3000, function(){
    console.log('Server on 3000');
